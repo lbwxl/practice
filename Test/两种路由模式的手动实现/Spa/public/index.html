@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--  导航区域 -->
+    <div class="router_box">
+        <a href="/home" class="router" replace="true">主页</a>
+        <a href="/classify" class="router">分类</a>
+        <a href="/mine" class="router">我的</a>
+        <a href="/more" class="router">更多</a>
+        <a href="/zkg" class="router">张凯歌</a>
+    </div>
+
+    <!-- 路由出口 -->
+    <div id="router-view"></div>
+</body>
+<script src="./eventBus.js"></script>
+<script>
+
+    function Router(options) {
+        // 初始化路由模式
+        this.mode = options.mode || 'hash';
+        // 保存路由表，没有的话给一个空数组,否则遍历的时候会报错
+        this.routes = options.routes || [];
+
+        this.init = function () {
+            // 获取所有的Dom 元素
+            let eles = document.querySelectorAll(".router");
+            // 添加点击事件
+            eles.forEach(item => {
+                item.addEventListener('click', e => {
+                    // 阻止默认行为和冒泡，因为这是a标签，有默认行为
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // 获取点击元素的href属性和replace属性
+                    let path = e.target.getAttribute('href');
+                    let isReplace = e.target.getAttribute('replace');
+
+                    // 根据路由模式修改地址栏
+                    if (this.mode === "hash") {
+                        // 判断是否是需要替换的路由模式 
+                        if (!!isReplace) {
+                            // 找到#在路径中的下标，用来截取
+                            let index = location.href.indexOf('#');
+                            window.location.replace(`${location.href.slice(0, index + 1)}${path}`);
+                        } else {
+                            window.location.hash = `#${path}`;
+                        }
+                    } else if (this.mode === 'history') {
+                        if (!!isReplace) {
+                            window.history.replaceState('', '', path);
+                        } else {
+                            window.history.pushState('', '', path);
+                        }
+                        event.emit('popstate');
+                    }
+                })
+            })
+
+            // 监听地址栏变化触发事件
+            if (this.mode === 'hash') {
+                window.addEventListener("hashchange", this.routeChange.bind(this))
+            } else {
+                window.addEventListener("popstate", this.routeChange.bind(this))
+                event.on('popstate', this.routeChange.bind(this));
+            }
+        }
+
+        // 响应路由变化
+        this.routeChange = function () {
+            let routerView = document.querySelector('#router-view');
+            if (this.mode === 'hash') {
+                // 截取字符串去掉 #
+                let path = window.location.hash.slice(1);
+                // 去routes里面查找和当前路径对的上的
+                let index = this.routes.findIndex(item => item.path == path);
+
+                // 如果 index 存在的话
+                if (index != -1) {
+                    // 显示内容
+                    routerView.innerHTML = this.routes[index].component;
+                } else {
+                    let matchAllIndex = this.routes.findIndex(item => item.path === "*");
+                    if (matchAllIndex != -1) {
+                        routerView.innerHTML = this.routes[matchAllIndex].component;
+                    }
+                }
+            } else {
+                let path = window.location.pathname;
+                let index = this.routes.findIndex(item => item.path === path);
+                if (index != -1) {
+                    routerView.innerHTML = this.routes[index].component;
+                } else {
+                    let matchAllIndex = this.routes.findIndex(item => item.path === "*");
+                    if (matchAllIndex != -1) {
+                        routerView.innerHTML = this.routes[matchAllIndex].component;
+                    }
+                }
+            }
+        }
+
+        this.init();
+    }
+
+
+    // 调用Router 构造器
+    new Router({
+        mode: "history",
+        routes: [
+            { path: '/home', component: `<h1>首页</h1><h4>新一代前端工程师：我们啥都会</h4>` },
+            { path: '/classify', component: `<h1>分类</h1><h4>今天2018-11-5，上课还得穿工装</h4>` },
+            { path: '/mine', component: `<h1>我的</h1><h4>WEB前端工程师</h4>` },
+            { path: '/more', component: `<h1>更多</h1><h4>一面而高薪就业</h4>` },
+            { path: '*', component: '<h1>404找不到</h1>' }
+        ]
+    })
+</script>

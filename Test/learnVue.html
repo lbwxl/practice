@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Learn Vue3</title>
+		<script src="https://unpkg.com/vue@next"></script>
+	</head>
+	<body>
+		<div id="app" class="demo">
+			{{ message }}
+			<p>个数：{{count}}</p>
+		</div>
+	</body>
+	<script type="text/javascript">
+		const HelloVueApp = {
+			data() {
+				return {
+					message: 'Hello Vue3!!',
+					count: 0
+				}
+			}
+		}
+		const spa = Vue.createApp(HelloVueApp);
+		console.log(spa.$data)
+		console.log('spa',spa);
+		const vm = spa.mount('#app');
+		console.log('vm',vm)
+		vm.$data.count = 'is me?'
+	</script>
+</html>

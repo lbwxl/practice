@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type='file' multiple>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    let inp = document.querySelector('input');
+    inp.onchange = function (e) {
+      console.log(e);
+      let file = e.target.files[0];
+      let form = new FormData();
+      form.append(file.name, file);
+      axios.post("http://123.206.55.50:11000/upload", form);
+      // axios.post("/api/file/upload?unique=0", form).then(res => {
+      //   console.log(res.data);
+      // })
+    }
+
+    // ele.onchange = function(e) {
+    //   console.log('e....', e);
+    //   let file = e.target.files[0]
+    //   let render = new FileReader();
+    //   reader.readAsDataURL(file);
+    //   render.onload = function() {
+    //     console.log('this...',this);;
+    //     axios.post('http://123.206.55.50:11000/upload_base64', {
+    //       base64: this.result
+    //     })
+    //   }
+    // }
+  </script>
+</body>
+
+</html>
