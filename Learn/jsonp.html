@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手动实现Jsonp</title>
+</head>
+<body>
+    <input type="text" placeholder="请输入想要搜索的内容">
+
+    <script>
+        let ele = document.querySelector('input');
+        ele.addEventListener('change', function(e){
+            let str = e.target.value;
+            console.log('str...', str);
+            if (str){
+                Jsonp({
+                    url: `http://www.baidu.com/sugrec?pre=1&p=3&ie=utf-8&json=1&prod=pc&from=pc_web&sugsid=26350&wd=${str}&req=2&csor=5`,
+                    cb: res=>{
+                        console.log('res...', res);
+                        if (res.g){
+                            let container = document.querySelector('.container');
+                            if (container){
+                                container.parentNode.removeChild(container);
+                            }
+                            let div = document.createElement('div');
+                            div.className = "container";
+                            let html = res.g.map(item=>{
+                                return `<p>${item.q}</p>`
+                            }).join('');
+                            div.innerHTML = html;
+                            document.body.appendChild(div);
+                        }
+                    }
+                })
+            }
+        })
+        // https://www.baidu.com/sugrec?pre=1&p=3&ie=utf-8&json=1&prod=pc&from=pc_web&sugsid=26350&wd=jsonp&req=2&bs=jsonp&csor=5&cb=jQuery110206397183164050344_1639986590850&_=1639986590851
+        function Jsonp({url, cb}){
+            let cbName = `cb${+ new Date()}`;
+            window[cbName] = function(...args){
+                cb(...args);
+            }
+            let script = document.createElement('script');
+            script.src = url+`&cb=${cbName}`;
+            script.onload = function(){
+                script.parentNode.removeChild(script);
+                delete window[cbName];
+            }
+            document.body.appendChild(script);
+        }
+    </script>
+</body>
+</html>
