@@ -1,9 +1,8 @@
 let current = 0;
 
-for(var i=0; i<5;i++) {
-    current++;
-    console.log('i--',i);
-    console.log('current',current);
-}
-
+setTimeout(() => {
+    for(var i=0; i<5;i++) {
+        // console.log('i--',i);
+    }    
+})
 console.log(i);

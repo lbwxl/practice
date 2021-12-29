@@ -24,31 +24,10 @@ function PromiseAll(task) {
                     resolve(res);
                 }
                 // 
-            },err => reject(err))
+            }, err => reject(err))
         }
     })
 }
-
-// function PromiseAll(promiseArray) {
-//     return new Promise((resolve, reject) => {
-//         if(!Array.isArray(promiseArray)) {
-//             reject(new TypeError(`${promiseArray} is not a Array`));
-//         }
-//         const res = [];
-//         const promiseNums = promiseArray.length;
-//         let counter = 0;
-
-//         for(let i = 0; i<promiseNums; i++) {
-//             Promise.resolve(promiseArray[i]).then(value => {
-//                 counter++;
-//                 res[i] = value;
-//                 if(counter === promiseNums) {
-//                     resolve(res)
-//                 }
-//             }).catch(e => reject(e))
-//         }
-//     })
-// }
 
 let p1 = new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -77,8 +56,8 @@ let p4 = new Promise((resolve, reject) => {
     }, 1500)
 })
 
-let a = PromiseAll([p1, p2, p3,p4]).then(res => {
-    console.log('res',res);
-},err => console.log('errrr',err))
+let a = PromiseAll([p1, p2, p3, p4]).then(res => {
+    console.log('res', res);
+}, err => console.log('errrr', err))
 // let a = Promise.all([p1,p2,p3,'123']);
 // a.then(res => console.log('res',res))
